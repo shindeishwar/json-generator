@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Setting_Group_Name__c</fullName>
+    <description>It is used to identify the group of setting records belongs to same JSON request.</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <inlineHelpText>It is used to identify the group of setting records belongs to same JSON request.</inlineHelpText>
+    <label>Setting Group Name</label>
+    <length>255</length>
+    <required>true</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>
