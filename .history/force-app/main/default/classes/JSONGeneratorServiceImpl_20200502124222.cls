@@ -309,6 +309,7 @@ public with sharing class JSONGeneratorServiceImpl {
         else{
             fieldVal = record.get(fieldName);
         }
+    
         return fieldVal;
     }
 
