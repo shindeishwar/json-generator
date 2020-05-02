@@ -1,3 +1,4 @@
 {
-    "eslint.nodePath": "/Users/ishwar.shinde/.vscode/extensions/salesforce.salesforcedx-vscode-lwc-47.16.0/node_modules"
+    "eslint.nodePath": "/Users/ishwar.shinde/.vscode/extensions/salesforce.salesforcedx-vscode-lwc-47.16.0/node_modules",
+    "salesforcedx-vscode-core.show-cli-success-msg": false
 }

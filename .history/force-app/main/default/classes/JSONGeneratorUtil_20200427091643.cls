@@ -23,22 +23,31 @@ public with sharing class JSONGeneratorUtil {
     }
 	
     //static map tp store json field settng metadata
-    private Map<String,List<JSON_Generator_Setting__mdt>> jsonSettingsByParentKeyMap
+    private static Map<String,List<JSON_Generator_Setting__mdt>> jsonSettingsByParentKeyMap
             = new Map<String,List<JSON_Generator_Setting__mdt>>(); 
 	
     //root setting 
-    private JSON_Generator_Setting__mdt rootSetting{
-        get { return rootSetting;}
-    }
+    private static JSON_Generator_Setting__mdt rootSetting;
 
     /**
 	 * Initilase the rootsetting and jsonSettingsByParentKeyMap by quering 
 	 * @param: String someId
      * @return: boolean true if success, false if failure
      */
-    public JSONGeneratorUtil(String settingGroupName) {
-        JSONGeneratorSettingSelector jsonSelector = new JSONGeneratorSettingSelector();
-        for(JSON_Generator_Setting__mdt settingsRec : jsonSelector.getSettingByGrpName(settingGroupName)) {
+    private static void initializeJsonSetting(String settingAPIName) {
+        
+        for(JSON_Generator_Setting__mdt settingsRec :[SELECT Id,
+                                                    Add_if_Null__c,
+                                                    Value_Element_Data_Type__c,
+                                                    JSON_Element_Type__c,
+                                                    JSON_Field_Name__c,
+                                                    Key__c,
+                                                    Parent_Key__c,
+                                                    Setting_Group_Name__c,
+                                                    SObject_Field_API_Name__c,
+                                                    Value_Default__c
+                                            FROM JSON_Generator_Setting__mdt
+                                            WHERE  Setting_Group_Name__c =:settingAPIName]) {
 
             if(!jsonSettingsByParentKeyMap.containsKey(settingsRec.Parent_Key__c)){
                 jsonSettingsByParentKeyMap.put(settingsRec.Parent_Key__c, new List<JSON_Generator_Setting__mdt>());
@@ -49,17 +58,20 @@ public with sharing class JSONGeneratorUtil {
                 rootSetting = settingsRec;
         }
     }
-/******************Moved to ServiceImpl************************/
+
     /**
     * Get field API Name set from JSON_Generator_Setting__mdt. It will be useful to generate dynamic SOQL
     * @param: String settingAPIName (JSON Setting Name)
     * @return: Set<String> - field api name set. It will be blank if there is no value found for SObject_Field_API_Name__c.
     */
-    public Set<String> getFields(String settingGroupName){
+    public static Set<String> getFields(String settingGrpName){
 
         Set<String> fieldSet = new Set<String>();
-        JSONGeneratorSettingSelector jsonSelector = new JSONGeneratorSettingSelector();
-        for(JSON_Generator_Setting__mdt settingsRec : jsonSelector.getSObjectFieldsByGrpName(settingGroupName)) {
+
+        for(JSON_Generator_Setting__mdt settingsRec :[SELECT Id,
+                                                    SObject_Field_API_Name__c
+                                            FROM JSON_Generator_Setting__mdt
+                                            WHERE  Setting_Group_Name__c =:settingGrpName]) {
 
             if(String.isNotBlank(settingsRec.SObject_Field_API_Name__c)){
                 fieldSet.add(settingsRec.SObject_Field_API_Name__c);
@@ -69,14 +81,14 @@ public with sharing class JSONGeneratorUtil {
 
         return fieldSet;
     }
-/******************Moved to ServiceImpl************************/
+
     /**
     *  Generate the JSON String from JSON_Generator_Setting__mdt metadata
     * @param: String settingAPIName (JSON Setting Name)
     * @param - List<Sobject> - SObject List from which JSON is generated
     * @return: String - generated JSON string.
     */
-    public String generateJSONString(String settingGrpName, List<Sobject> sObjectList){
+    public static String generateJSONString(String settingGrpName, List<Sobject> sObjectList){
 
         //get JSON Generator Setting records 
 
@@ -86,16 +98,16 @@ public with sharing class JSONGeneratorUtil {
         return reqBodyString;
 
     }
-/******************Moved to ServiceImpl************************/
+
     /**
     * Generate the JSON data from provided SObjects and metadata config
     * @param - List<Sobject> - SObject List from which JSON is generated
     * @param: String settingAPIName (JSON Setting Name)
     * @return: Object - JSON data
     */
-    public Object gatherJSONData(String settingGrpName, List<SObject> sObjectList){
+    public static Object gatherJSONData(String settingGrpName, List<SObject> sObjectList){
         //initialze the JSON setting config
-        //new JSONGeneratorUtil(settingGrpName);
+        initializeJsonSetting(settingGrpName);
         //check if root is present, else throw an exception
         if( rootSetting == null ){
             throw new JSONGeneratorUtil.ConfigException('No root record found while generating JSON request for the api - '+ settingGrpName);
@@ -118,7 +130,7 @@ public with sharing class JSONGeneratorUtil {
     * @param: JSON_Generator_Setting__mdt  JSON Setting instance
     * @return: Object - JSON Element
     */
-    private Object getElement(JSON_Generator_Setting__mdt setting){
+    private static Object getElement(JSON_Generator_Setting__mdt setting){
         Object element;
 
         if(setting.JSON_Element_Type__c == 'List'){
@@ -137,7 +149,7 @@ public with sharing class JSONGeneratorUtil {
     * @param - Sobject - record : SObject instane which will be used to gather the data
     * @return: none
     */
-    private void getChildren(Object parent, String parentName, Sobject record){
+    private static void getChildren(Object parent, String parentName, Sobject record){
         //System.debug(LoggingLevel.INFO,'---- parentName : '+ parentName);
         List<JSON_Generator_Setting__mdt> childRecs= getAllChildrenBasedOnParent(parentName);
         for(JSON_Generator_Setting__mdt cRec :childRecs){
@@ -151,7 +163,7 @@ public with sharing class JSONGeneratorUtil {
     * @param: String - parentName - parentKey  to identify the child setting list
     * @return: List<JSON_Generator_Setting__mdt>  - child JSON_Generator_Setting__mdt list
     */
-    private List<JSON_Generator_Setting__mdt> getAllChildrenBasedOnParent(String parentName){
+    private static List<JSON_Generator_Setting__mdt> getAllChildrenBasedOnParent(String parentName){
          List<JSON_Generator_Setting__mdt> childs = new List<JSON_Generator_Setting__mdt>();
         if(jsonSettingsByParentKeyMap.containsKey(parentName)){
             childs = jsonSettingsByParentKeyMap.get(parentName);
@@ -168,7 +180,7 @@ public with sharing class JSONGeneratorUtil {
     * @param - Sobject - record : SObject instane which will be used to gather the data
     * @return: none
     */
-    private void createChild(Object parent, JSON_Generator_Setting__mdt childSettingRec, Sobject record){
+    private static void createChild(Object parent, JSON_Generator_Setting__mdt childSettingRec, Sobject record){
 
         //#1. Process ValueElement - MapValueElement & ListValueElement by generating the value and then
         // add them to parent JSON Element
@@ -223,7 +235,7 @@ public with sharing class JSONGeneratorUtil {
     * @param: String - parentName - parentKey  to identify the child setting list
     * @return: List<JSON_Generator_Setting__mdt>  - child JSON_Generator_Setting__mdt list
     */
-    private Object getJSONFieldValue(JSON_Generator_Setting__mdt otRec, Sobject obj) {
+    private static Object getJSONFieldValue(JSON_Generator_Setting__mdt otRec, Sobject obj) {
         Object retVal;
         if(String.isNotBlank(otRec.Value_Default__c)){
             retVal = getDefaultValue(otRec.Value_Default__c, otRec.Value_Element_Data_Type__c );
@@ -260,7 +272,7 @@ public with sharing class JSONGeneratorUtil {
     * @param: String - dataType : expected output data type
     * @return: Object - JSON data element value
     */
-    private Object getDefaultValue(String valueDefault, String dataType){
+    private static Object getDefaultValue(String valueDefault, String dataType){
          Object retVal;
             if(dataType	 == 'Boolean')
                 retVal = Boolean.valueOf(valueDefault);
@@ -284,7 +296,7 @@ public with sharing class JSONGeneratorUtil {
     * @param: DateTime - val : DateTime value
     * @return: String - DateTime in string format
     */
-    private String convertDateTime(DateTime val) {
+    private static String convertDateTime(DateTime val) {
         return (val == null ? null : val.formatGMT(DATETIME_FORMAT_STRING));
     }
 
@@ -294,7 +306,7 @@ public with sharing class JSONGeneratorUtil {
     * @param: DateTime - val : Date value in datetime format
     * @return: String - Date in string format
     */
-    private String convertDate(DateTime val) {
+    private static String convertDate(DateTime val) {
         return (val == null ? null : val.formatGMT(DATE_FORMAT_STRING));
     }
 
@@ -305,7 +317,7 @@ public with sharing class JSONGeneratorUtil {
     * @param: String - fieldName : Sobject field Name
     * @return: Object - JSON data element value
     */
-    private Object getFieldVal(Sobject record, String fieldName) {
+    private static Object getFieldVal(Sobject record, String fieldName) {
         Object fieldVal = null;
 
         if (fieldName.contains('.')) {

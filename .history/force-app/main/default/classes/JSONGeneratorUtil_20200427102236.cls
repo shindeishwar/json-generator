@@ -27,9 +27,7 @@ public with sharing class JSONGeneratorUtil {
             = new Map<String,List<JSON_Generator_Setting__mdt>>(); 
 	
     //root setting 
-    private JSON_Generator_Setting__mdt rootSetting{
-        get { return rootSetting;}
-    }
+    private JSON_Generator_Setting__mdt rootSetting;
 
     /**
 	 * Initilase the rootsetting and jsonSettingsByParentKeyMap by quering 
@@ -95,7 +93,7 @@ public with sharing class JSONGeneratorUtil {
     */
     public Object gatherJSONData(String settingGrpName, List<SObject> sObjectList){
         //initialze the JSON setting config
-        //new JSONGeneratorUtil(settingGrpName);
+        initializeJsonSetting(settingGrpName);
         //check if root is present, else throw an exception
         if( rootSetting == null ){
             throw new JSONGeneratorUtil.ConfigException('No root record found while generating JSON request for the api - '+ settingGrpName);

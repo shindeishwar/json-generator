@@ -27,9 +27,7 @@ public with sharing class JSONGeneratorUtil {
             = new Map<String,List<JSON_Generator_Setting__mdt>>(); 
 	
     //root setting 
-    private JSON_Generator_Setting__mdt rootSetting{
-        get { return rootSetting;}
-    }
+    private JSON_Generator_Setting__mdt rootSetting;
 
     /**
 	 * Initilase the rootsetting and jsonSettingsByParentKeyMap by quering 
