@@ -8,82 +8,19 @@ This utility uses the metadata - JSON Generator Setting (JSON_Generator_Setting_
 
 ![](images/Custom%20Metadata%20Types%20%20%20Salesforce.png)
 
-<table>
-  <tr>
-    <td>Field Label</td>
-    <td>Data Type</td>
-    <td>Usage</td>
-  </tr>
-  <tr>
-    <td>Add if Null</td>
-    <td>Checkbox</td>
-    <td>If true, then include the field in JSON even though field value is null. 
-If false, field will be excluded if field value is null.
-
-Default is true.</td>
-  </tr>
-  <tr>
-    <td>JSON Element Type</td>
-    <td>Picklist</td>
-    <td>Indicate element type in JSON structure. 
-
-Currently supported element type - List, Map, ListValueElement, MapValueElement</td>
-  </tr>
-  <tr>
-    <td>Value Element Data Type</td>
-    <td>Picklist</td>
-    <td>Expected data type of Value Element in JSON string. Specify for JSON Element Type = MapValueElement or ListValueElement
-
-Supported Data Types - String, Integer, Decimal, Boolean, Date, DateTime.</td>
-  </tr>
-  <tr>
-    <td>JSON Field Name</td>
-    <td>Text(255)</td>
-    <td>Value key/field name in JSON string</td>
-  </tr>
-  <tr>
-    <td>Key</td>
-    <td>Text(255)</td>
-    <td>Key (unique with-in JSON group settings records) to identify the specific record and create JSON hierarchy</td>
-  </tr>
-  <tr>
-    <td>Parent Key</td>
-    <td>Text(255)</td>
-    <td>Parent JSON element record key</td>
-  </tr>
-  <tr>
-    <td>Setting Group Name</td>
-    <td>Text(255)</td>
-    <td>JSON setting group name. Used to isolate groups of records for specific JSON creation.
-
-You can specify different JSON configurations by grouping related records with unique Setting Group Name</td>
-  </tr>
-  <tr>
-    <td>SObject Field API Name</td>
-    <td>Text(255)</td>
-    <td>Sobject field from which we need to read data for ValueElement. Specify current sobject or parent sobject fields (with dot notation).
-
-Only supports current SObject and Parent Sobject records.</td>
-  </tr>
-  <tr>
-    <td>Value - Default</td>
-    <td>Text(255)</td>
-    <td>Specify if you want to include any default value for JSON field. 
-
-Default field will have higher precedence and will ignore the SObject field detail specified in setting. 
-Useful when API expects to add standard/dummy values for compatibility purposes.</td>
-  </tr>
-  <tr>
-    <td>Label</td>
-    <td>Text(40)</td>
-    <td>Standard Metadata Setting label </td>
-  </tr>
-  <tr>
-    <td>JSON Generator Setting Name</td>
-    <td>Text(40)</td>
-    <td>Standard Metadata Setting Name - unique across metadata records.</td>
-  </tr>
-</table>
+Field Label | Data Type | Usage
+------------|-----------|-----------
+Add if Null|Checkbox|If true, then include the field in JSON even though field value is null. If false, field will be excluded if field value is null. Default is true.
+ JSON Element Type|Picklist|Indicate element type in JSON structure. Currently supported element type - List, Map, ListValueElement, MapValueElement  
+Value Element Data Type|Picklist|Expected data type of Value Element in JSON string. Specify for JSON Element Type = MapValueElement or ListValueElement. Supported Data Types - String, Integer, Decimal, Boolean, Date, DateTime.  
+JSON Field Name|Text(255)|Value key/field name in JSON string  
+Key|Text(255)|Key (unique with-in JSON group settings records) to identify the specific record and create JSON hierarchy  
+Parent Key|Text(255)|Parent JSON element record key  
+Setting Group Name|Text(255)|JSON setting group name. Used to isolate groups of records for specific JSON creation.You can specify different JSON configurations by grouping related records with unique Setting Group Name  
+SObject Field API Name|Text(255)|Sobject field from which we need to read data for ValueElement. Specify current sobject or parent sobject fields (with dot notation). Only supports current SObject and Parent Sobject records.  
+Value - Default|Text(255)|Specify if you want to include any default value for JSON field. Default field will have higher precedence and will ignore the SObject field detail specified in setting. Useful when API expects to add standard/dummy values for compatibility purposes.  
+Label|Text(40)|Standard Metadata Setting label   
+JSON Generator Setting Name|Text(40)|Standard Metadata Setting Name - unique across metadata records.  
 
 
 # CONSIDERATIONS
