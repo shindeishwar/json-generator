@@ -104,13 +104,13 @@ Useful when API expects to add standard/dummy values for compatibility purposes.
 
 * You can avoid the null fields getting added in JSON using the Add_if_Null attribute.
 
-* Date and DateTime currently using below format. You can change it if you need to by updating the static variable in JSONGeneratorUtil class.
+* Date and DateTime currently using below format. You can change it if you need to by updating the static variable in JSONGeneratorServiceImpl class.
 
 	* public static String DATE_FORMAT_STRING = 'yyyy-MM-dd';
 
 	* public static String DATETIME_FORMAT_STRING =  'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'';
 
-* JSONGeneratorUtil class exposes below 3 methods
+* JSONGeneratorService class exposed below 3 static methods
 
    1. public static String **generateJSONString(String settingGrpName, List\<Sobject> sObjectList)**
     
@@ -159,62 +159,53 @@ Useful when API expects to add standard/dummy values for compatibility purposes.
 
 ### JSON format :
 
-[ { "accountName" : "",  "type" : "",  "noOfEmployees" : ,  
-
- "address" : {  "BiLling City" : "",  "Billing Country" : ""  },  
-
-"id": "",  "isCustomer" : true } ]
+	[ { 
+	    "accountName" : "",  
+	    "type" : "",  "noOfEmployees" : ,  
+	    "address" : {  
+			 "BiLling City" : "",  
+			 "Billing Country" : ""  
+			 },  
+	   "id": "",  
+	   "isCustomer" : true 
+	  } ]
 
 ### JSON Setting Configuration:
 
 ![](images/Account%20Sample%20JSON%20records.png)
 
-### Call JSONGeneratorUtil class
+### Call JSONGeneratorService class
 
-	
+	String jsonGrpName = 'Account Sample JSON'; //JSON Setting Group Name
 
-String jsonGrpName = 'Account Sample JSON'; //JSON Setting Group Name
+	List\<String> fieldNameList = new List\<String>();
+	fieldNameList.addAll(JSONGeneratorService.getFields(jsonGrpName));//get fields in list of string so that we can use join operator
 
-List\<String> fieldNameList = new List\<String>();
+	List\<Account> accountList = Database.query('Select '+ String.join(fieldNameList,',')+' from Account Where id In (\'0010K00001iwgeQQAQ\', \'0010K00001uU7XLQA0\')'); //form query and fetch accounts
 
-fieldNameList.addAll(JSONGeneratorUtil.getFields(jsonGrpName));//get fields in list of string so that we can use join operator
-
-List\<Account> accountList = Database.query('Select '+ String.join(fieldNameList,',')+' from Account Where id In (\'0010K00001iwgeQQAQ\', \'0010K00001uU7XLQA0\')'); //form query and fetch accounts
-
-String jsonString = JSONGeneratorUtil.generateJSONString(jsonGrpName,accountList);//call JSONGeneratorUtil method to get JSON String
+	String jsonString = JSONGeneratorService.generateJSONString(jsonGrpName,accountList);//call JSONGeneratorUtil method to get JSON String
 
 ### Output
 
-[ {  "accountCreatedOn" : "2018-04-22",
-
-  "accountName" : "ABC Labs",
-
-  "type" : "Agriculture",
-
-  "accountAddress" : {
-    "country" : "United States",
-    "city" : "San Jose"
-  },
-
-  "id" : "0010K00001iwgeQQAQ",
-
-  "isCustomer" : true,
-
-  "noOfEmployees" : 123
-
-}, {  "accountCreatedOn" : "2018-12-19",
-
-  "accountName" : "accenture",
-
-  "type" : "Banking",
-
-  "accountAddress" : {
-    "country" : "US",
-    "city" : "Sunnyvale"
-  },
-
-  "id" : "0010K00001uU7XLQA0",
-
-  "isCustomer" : true
-
-} ]
+	[ {  
+	  "accountCreatedOn" : "2018-04-22",
+	  "accountName" : "ABC Labs",
+	  "type" : "Agriculture",
+	  "accountAddress" : {
+	    "country" : "United States",
+	    "city" : "San Jose"
+	  },
+	  "id" : "0010K00001iwgeQQAQ",
+	  "isCustomer" : true,
+	  "noOfEmployees" : 123
+	}, {  
+	  "accountCreatedOn" : "2018-12-19",
+	  "accountName" : "accenture",
+	  "type" : "Banking",
+	  "accountAddress" : {
+	    "country" : "US",
+	    "city" : "Sunnyvale"
+	  },
+	  "id" : "0010K00001uU7XLQA0",
+	  "isCustomer" : true
+	} ]
